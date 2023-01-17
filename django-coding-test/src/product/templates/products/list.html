@@ -16,8 +16,11 @@
                     <input type="text" name="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
+                    <select name="variant_option" id="" class="form-control">
                         <option selected disabled>--Select A Variant--</option>
+                        {% for variant in variants %}
+                        <option value={{variant}}>{{variant}}</option>
+                        {% endfor %}
 
                     </select>
                 </div>
@@ -61,7 +64,7 @@
                             <td>{{product.title}} <br> Created at : {{product.created}}</td>
                             <td>{{product.description}}</td>
                             <td>
-                                {% for variant in variants %}
+                                {% for variant in variantsPrice %}
                                 {% if variant.product == product %}
                                 <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
                                     <dt class="col-sm-3 pb-0">
