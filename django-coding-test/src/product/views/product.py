@@ -19,6 +19,7 @@ class CreateProductView(generic.TemplateView):
         context = super(CreateProductView, self).get_context_data(**kwargs)
         variants = Variant.objects.filter(active=True).values('id', 'title')
         product = Product.objects.all()
+
         context['product'] = product
         context['variants'] = list(variants.all())
         return context
@@ -76,19 +77,36 @@ class ProductListView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # fm = StudentRegistration()
+        
+        title = self.request.GET.get('title')
+        selected_option = self.request.GET.get('variant_option')
         products = Product.objects.all()
+        if title:
+            products = products.filter(title__icontains=title)
+        if selected_option:
+            producVariant = ProductVariant.objects.filter(variant__title__icontains=selected_option)
+            productvarientId = []
+            for i in producVariant:
+                product = i.product
+                product_id = product.id
+                productvarientId.append(product_id)
+        products = Product.objects.filter(id__in= productvarientId)
+        print(products, "Non")
         paginator = Paginator(products, self.paginate_by)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        variants = ProductVariantPrice.objects.all()
+        variantsPrice = ProductVariantPrice.objects.all()
+        variant = Variant.objects.all()
         total_product = products.count()
-        highnumber = int(page_number)*10
+        highnumber = 10
+        if page_number !=None:
+            highnumber = int(page_number)*10
         # for product in products:
         #     for variant in variants:
         #         if variant.product == product:
         #             print("This")
         
-        context = { 'variants': variants, 'page_obj': page_obj, "total": total_product, 'highest': highnumber}
+        context = { 'variantsPrice': variantsPrice, 'page_obj': page_obj, "total": total_product, 'highest': highnumber, 'variants': variant}
         return context
 
 
